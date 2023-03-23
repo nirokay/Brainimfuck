@@ -34,7 +34,7 @@ proc runtimeException(program: string, error: RuntimeError, msg: string) =
     quit(1)
 
 proc getRawProgramInstructions(): string =
-    var text: string = stdin.readAll().strip()
+    var text: string = stdin.readLine().strip()
     for c in text:
         if not charset.contains(c): continue
         result.add(c)
