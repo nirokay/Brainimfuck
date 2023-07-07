@@ -1,4 +1,4 @@
-Using loops, this will print 'A'
+Using loops: this will print 'A'
 
 ++++ ++++
 
