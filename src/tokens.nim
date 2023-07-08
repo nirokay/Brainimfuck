@@ -17,7 +17,7 @@ proc convertToToken(raw: char): Option[Token] =
     of ']': return some loopBracketEnd
     of '.': return some outputChar
     of ',': return some inputChar
-    else: discard
+    else:   return none Token
 
 
 proc convertToTokens*(rawString: string): seq[Token] =

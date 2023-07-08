@@ -1,11 +1,19 @@
-import std/[tables]
+import std/[tables, terminal]
 import ./globals, ./tokens, ./memorytape
 
 var tape = Tape()
 
 
-proc handleUserInput() = return
+proc handleUserInput() =
+    if printDebugInformation:
+        stdout.writeLine "\nEnter a character as input: "
+        stdout.flushFile()
 
+    tape.writeValue(uint8 getch())
+
+    if printDebugInformation:
+        stdout.write "\n"
+        stdout.flushFile()
 
 proc executeInstruction*(instruction: Token) =
     ## Executes a single instruction.
