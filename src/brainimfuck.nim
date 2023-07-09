@@ -77,7 +77,7 @@ when isMainModule:
 
     # Check syntax:
     if not runWithoutChecks:
-        if checkProgramSyntax(): quit(1)
+        if not checkProgramSyntax(): quit(1)
 
     # Run commands:
     executeProgram()

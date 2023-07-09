@@ -35,7 +35,6 @@ proc checkProgramSyntax*(): bool =
         # Remember error position and loop over again:
         if error:
             errorPositions.add(instructionPosition)
-            result = true
         instructionPosition.inc()
     
     # Warn about lone opening brackets:
@@ -44,7 +43,7 @@ proc checkProgramSyntax*(): bool =
         warn(error, &"Opening bracket without corresponding closing one! Forgot to close?")
 
     # Display source with highlighting or exit if no errors found:
-    if errorPositions.len() == 0: return false
+    if errorPositions.len() == 0: return true
 
     var
         instructions: string = programInstructions.convertToString()
