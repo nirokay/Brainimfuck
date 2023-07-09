@@ -2,7 +2,7 @@
 
 version       = "1.0.0"
 author        = "nirokay"
-description   = "Brainfuck compiler written in Nim."
+description   = "Brainfuck interpreter with some advanced features, such as syntax checking and highlighting errors."
 license       = "GPL-3.0-only"
 srcDir        = "src"
 bin           = @["brainimfuck"]
