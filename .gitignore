@@ -1,4 +1,12 @@
+# Project Management:
+.vscode
+
 # Executables:
 *.out
 *.exe
 brainimfuck
+
+# Testing files:
+test
+*test*.*
+
