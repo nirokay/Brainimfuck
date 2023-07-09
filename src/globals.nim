@@ -1,3 +1,4 @@
+#import std/tables
 import ./tokens, ./memorytape
 export tokens, memorytape
 
@@ -10,3 +11,4 @@ var
 
     printStatsAfterExecution*: bool
     printDebugInformation*: bool
+    runWithoutChecks*: bool

@@ -7,7 +7,7 @@ proc parseSourceString*(rawString: string): seq[Token] =
 proc parseSourceFile*(filepath: string): seq[Token] =
     var fileContent: string
     if not filepath.fileExists():
-        errorNoSourceFileFound.panic()
+        errorNoSourceFileFound.panic("File does not exist!")
     
     try:
         fileContent = filepath.readFile()

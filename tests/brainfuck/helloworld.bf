@@ -1,4 +1,9 @@
-++++++++               Set Cell #0 to 8
+[
+    This program is ripped straight from wikipedia
+    https://en.wikipedia.org/wiki/Brainfuck#Hello_World!
+]
+
+++++++++                Set Cell #0 to 8
 [
     >++++               Add 4 to Cell #1; this will always set Cell #1 to 4
     [                   as the cell will be cleared by the loop

@@ -44,11 +44,16 @@ when isMainModule:
         ),
         (
             nameLong: "debug", nameShort: "d",
-            desc: "Prints useful debug information",
+            desc: "Prints useful debug information.",
             call: proc(args: string) {.closure.} = printDebugInformation = true
+        ),
+        (
+            nameLong: "unsafe-run", nameShort: "u",
+            desc: "Skips syntax checking and run potentially unsafe/incorrect code.",
+            call: proc(args: string) {.closure.} = runWithoutChecks = true
         )
     ]
-    
+
 
     # Parse commandline arguments:
     var p = initOptParser(commandLineParams())
@@ -65,10 +70,14 @@ when isMainModule:
                 if key == cmd.nameShort or key == cmd.nameLong: cmd.call(value)
 
     # Check source file:
-    if sourceFilePath == "": errorNoSourceFileGiven.panic()
+    if sourceFilePath == "": errorNoSourceFileGiven.panic("No source file!")
 
     # Parse source to tokens:
     programInstructions = sourceFilePath.parseSourceFile()
+
+    # Check syntax:
+    if not runWithoutChecks:
+        if checkProgramSyntax(): quit(1)
 
     # Run commands:
     executeProgram()
