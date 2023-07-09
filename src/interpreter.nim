@@ -1,7 +1,9 @@
-import std/[strformat, tables, terminal]
-import ./globals, ./tokens, ./memorytape, ./error
+import std/[strformat, tables, terminal, times]
+import ./globals, ./tokens, ./memorytape, ./error, ./loopstack as loopstack_file
 
-var tape = Tape()
+var
+    tape = Tape()
+    loopStack = LoopStack()
 
 # -----------------------------------------------------------------------------
 # Syntax Checks:
@@ -90,17 +92,10 @@ proc executeInstruction*(instruction: Token) =
     of decreaseTapeData: tape.decreaseCurrentCell()
 
     of loopBracketBegin:
-        if tape.readValue() == 0:
-            loopStack.add(instructionPointer - 1)
-        else:
-            var index: int64 = instructionPointer
-            while programInstructions[index] != loopBracketEnd:
-                index.inc()
-            instructionPointer = index
+        if tape.readValue() == 0: instructionPointer.jumpForwards(loopStack)
 
     of loopBracketEnd:
-        if tape.readValue() != 0: instructionPointer = loopStack.pop()
-        else: discard loopStack.pop()
+        if tape.readValue() != 0: instructionPointer.jumpBackwards(loopStack)
 
     of inputChar: handleUserInput()
     of outputChar: stdout.write tape.readValue().char()
@@ -110,16 +105,24 @@ proc executeInstruction*(instruction: Token) =
 
 proc executeProgram*() =
     ## Executes a set of instructions.
-    var executionCicles: int    
-    
+    let timeInitExecutionBegin: Time = getTime()
+    var executionCicles: int
     programInstructions.add(noOperation)
+
+    # Put all brackets into "stack":
+    try:
+        loopStack.add(programInstructions)
+    except CatchableError, Defect:
+        errorSyntax.panic("Invalid amount of brackets found, run in safe mode to see more details! Error:\n" & getCurrentExceptionMsg())
+
+    let timeRunningBegin: Time = getTime()
     try:
         while instructionPointer <= programInstructions.len() - 1:
             let instruction: Token = programInstructions[instructionPointer]
             
             if printDebugInformation:
                 echo "---- Cicle " & $executionCicles & " ---- "
-                echo "Instruction ID: " & $instructionPointer & "\tInstruction: " & $instruction & "\tLoop stack: " & $loopStack
+                echo "Instruction ID: " & $instructionPointer & "\tInstruction: " & $instruction & "\tLoop stack: " & $loopStack.stack
                 echo "Tape pointer: " & $tape.pointerPosition & "\nCurrent tape value: " & $tape.readValue()
                 echo "Tape: " & $tape.table
 
@@ -145,5 +148,29 @@ proc executeProgram*() =
         stderr.write "\n\n"
 
         errorSyntax.panic("Runtime error, causing interpreter error: " & getCurrentExceptionMsg())
+    finally:
+        stdout.flushFile()
+
+        if printStatsAfterExecution:
+            stderr.write "\n"
+            stderr.flushFile()
+
+            # Execution cicles and instructions:
+            stderr.styledWriteLine styleUnderscore, styleBright, "Instructions:"
+            stderr.styledWriteLine "Execution cicles: " & $executionCicles & "\nInstructions: " & $(programInstructions.len() - 1)
+
+            # Execution Time:
+            let
+                timeEnd:  Time     = getTime()
+                execDur:  Duration = timeEnd - timeRunningBegin
+                totalDur: Duration = timeEnd - timeInitExecutionBegin
+                initDur:  Duration = totalDur - execDur
+
+            stderr.styledWriteLine styleUnderscore, styleBright, "\nTimers:"
+            stderr.styledWriteLine "Initialisation Time:  " & $initDur
+            stderr.styledWriteLine "Execution Time:       " & $execDur
+            stderr.styledWriteLine "---"
+            stderr.styledWriteLine "Total time:           " & $totalDur
+
 
 

@@ -1,13 +1,11 @@
-#import std/tables
-import ./tokens, ./memorytape
-export tokens, memorytape
+import ./tokens, ./memorytape, ./loopstack
+export tokens, memorytape, loopstack
 
 # Instructions: ---------------------------------------------------------------
 
 var
     programInstructions*: seq[Token]
-    instructionPointer*: int64
-    loopStack*: seq[int64]
+    instructionPointer* {.global.}: int64
 
     printStatsAfterExecution*: bool
     printDebugInformation*: bool
