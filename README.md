@@ -8,7 +8,7 @@ Brainimfuck is a [Brainfuck](https://wikipedia.org/wiki/Brainfuck) interpreter w
 
 Nimble:
 
-`nimble install brainimfuck` (not yet added in repo)
+`nimble install brainimfuck`
 
 Manually:
 
